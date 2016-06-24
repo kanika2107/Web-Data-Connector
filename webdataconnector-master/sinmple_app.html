@@ -1,0 +1,291 @@
+<html>
+<head>
+<title>Consolidated Dashboard </title>
+<style>
+ /* Style the list */
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Float the list items side by side */
+ul.tab li {float: left;}
+
+/* Style the links inside the list items */
+ul.tab li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of links on hover */
+ul.tab li a:hover {background-color: #ddd;}
+
+/* Create an active/current tablink class */
+ul.tab li a:focus, .active {background-color: #ccc;}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+.tabcontent {
+    -webkit-animation: fadeEffect 1s;
+    animation: fadeEffect 1s; /* Fading effect takes 1 second */
+}
+
+@-webkit-keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+h1 {
+	text-align: center;
+}
+
+#jenkins_ratable_success {
+  color: green;
+}
+#jenkins_ratable_fail {
+  color: red;
+}
+
+#jenkins_care_fail {
+  color: red;
+}
+#jenkins_care_success {
+  color: green;
+}
+
+#jenkins_tern_fail {
+  color: red;
+}
+#jenkins_tern_success {
+  color: green;
+}
+#jenkins_ratable {
+  color: blue;
+}
+#jenkins_care {
+  color: blue;
+}
+#jenkins_tern {
+  color: blue;
+}
+#jenkins1{
+  font-size: 15px;
+  font-weight: bold;
+}
+#jenkins2{
+  font-size: 15px;
+  font-weight: bold;
+}
+#jenkins3{
+  font-size: 15px;
+  font-weight: bold;
+}
+
+</style>
+</head>
+
+<body>
+<h1>Consolidated Dashboard</h1>
+
+
+<div ng-app="">
+
+ <ul class="tab">
+  <li><a href="#" class="tablinks" onclick="show_data(event, 'Monitoring'); loadDoc('jenkins1','jenkins_ratable','jenkins_ratable_success','jenkins_ratable_fail','http://fmsscm.corp.intuit.net/fms-build/view/Ratable/job/Ratable_Nightly_Build/api/json')">Ratable Monitoring</a></li>
+  <li><a href="#" class="tablinks" onclick="show_data(event, 'Care'); loadDoc('jenkins2','jenkins_care','jenkins_care_success','jenkins_care_fail','http://fmsscm.corp.intuit.net/fms-build/view/Ratable/job/Ratable_Nightly_Build/api/json')">Ratable Care Portal</a></li>
+  <li><a href="#" class="tablinks" onclick="show_data(event, 'Tern'); loadDoc('jenkins3','jenkins_tern','jenkins_tern_success','jenkins_tern_fail','http://fmsscm.corp.intuit.net/fms-build/view/Ratable/job/Ratable_Nightly_Build/api/json')">Tern</a></li>
+</ul>
+
+<div id="Monitoring" class="tabcontent">
+  <h3>Ratable Monitoring</h3>
+    <iframe src="https://rpm.newrelic.com/public/charts/gp69tFyseYB" width="500" height="300" scrolling="no" frameborder="no"></iframe>
+
+  <div id="jenkins1">
+  </div>
+  <div id="jenkins_ratable_success">
+  </div>
+  <div id="jenkins_ratable_fail">
+  </div>
+  <div id="jenkins_ratable">
+  </div>
+  
+</div>
+
+<div id="Care" class="tabcontent">
+  <h3>Ratable Care Portal</h3>
+  <iframe src="https://rpm.newrelic.com/public/charts/gp69tFyseYB" width="500" height="300" scrolling="no" frameborder="no"></iframe>
+  <br>
+  <div id="jenkins2">
+  </div>
+  <div id="jenkins_care_success">
+  </div>
+  <div id="jenkins_care_fail">
+  </div>
+  <div id="jenkins_care">
+  </div>
+</div>
+
+<div id="Tern" class="tabcontent">
+    <h3>Tern</h3>
+
+  <iframe src="https://rpm.newrelic.com/public/charts/5hh3K7sYau8" width="500" height="300" scrolling="no" frameborder="no"></iframe>
+<br>
+<div> 
+ <div id="jenkins3">
+  </div>
+  <div id="jenkins_tern_success">
+  </div>
+
+  <div id="jenkins_tern_fail">
+  </div>
+   <div id="jenkins_tern">
+  </div>
+</div>
+</div>
+</div>
+<script>
+
+function loadDoc(i,id,id_green,id_red,url) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      var display_string="Jenkins Data";
+      var a = xhttp.responseText;
+      a = a.toString();
+      var res = a.replace("<P>","");
+      res = res.replace("</B><P>","");
+      res = res.replace("<B>","");;
+      res = res.replace("<P>","");
+      var obj = JSON.parse(res);
+      var red;
+      var green;
+      var first_build,health_report,last_build,last_completed_build,last_failed_build, last_stable_build,last_successful_build,last_unsuccessful_build,last_unstable_build;
+      if(obj["firstBuild"]==null)
+      {
+        first_build = "First Build number: none";
+      }
+      else
+      {
+        first_build = "First Build number:" + obj["firstBuild"]["number"]+ "<br>" + "First Build url: " + obj["firstBuild"]["url"].link(obj["firstBuild"]["url"]);
+      }
+      if(obj["healthReport"]==null)
+      {
+        health_report = "Health Report:  none"; ;
+      }
+      else
+      {
+        health_report = "Health Report:  " + obj["healthReport"][0]["description"];
+
+      }
+      if(obj["lastBuild"]==null)
+      {
+        last_build =  "Last Build: none";
+      }
+      else
+      {
+        last_build = "Last Build: "+obj["lastBuild"]["number"]+"<br>"+"Last Build url:"+obj["lastBuild"]["url"].link(obj["lastBuild"]["url"]);
+
+      }
+      if(obj["lastCompletedBuild"]==null)
+      {
+        last_completed_build = "Last Completed Build: none";
+      }
+      else
+      {
+        last_completed_build = "Last Completed Build: "+obj["lastCompletedBuild"]["number"]+"<br>"+"Last Completed Build url:"+obj["lastCompletedBuild"]["url"].link(obj["lastCompletedBuild"]["url"]);
+ 
+      }
+      if(obj["lastFailedBuild"]==null)
+      {
+        last_failed_build = "Last Failed Build: none " ;
+      }
+      else
+      {
+        last_failed_build = "Last Failed Build: "+obj["lastFailedBuild"]["number"]+"<br>"+"Last Failed Build url:"+obj["lastFailedBuild"]["url"].link(obj["lastFailedBuild"]["url"]);
+      }
+      if(obj["lastStableBuild"]==null)
+      {
+        last_stable_build = "Last Stable Build: none ";
+      }
+      else
+      {
+        last_stable_build = "Last Stable Build: "+obj["lastStableBuild"]["number"]+"<br>"+"Last Stable Build url:"+obj["lastStableBuild"]["url"].link(obj["lastStableBuild"]["url"]);
+
+      }
+      if(obj["lastSuccessfulBuild"]==null)
+      {
+        last_successful_build = "Last Successful Build: none";
+      }
+      else
+      {
+        last_successful_build = "Last Successful Build: "+obj["lastSuccessfulBuild"]["number"]+"<br>"+"Last Successful Build url:"+obj["lastSuccessfulBuild"]["url"].link(obj["lastSuccessfulBuild"]["url"]);
+
+      }
+      if(obj["lastUnstableBuild"]==null)
+      {
+
+        last_unstable_build = "Last unstable Build: none";
+      }
+      else
+      {
+        last_unstable_build = "Last unstable Build: "+obj["lastUnstableBuild"]["number"]+"<br>"+"Last Unstable Build url:"+obj["lastUnstableBuild"]["url"].link(obj["lastUnstableBuild"]["url"]);
+
+      }
+      if(obj["lastUnsuccessfulBuild"]==null)
+      {
+        last_unsuccessful_build = "Last Unsuccessful Build: none"; 
+      }
+      else
+      {
+        last_unsuccessful_build = "Last Unsuccessful Build: "+obj["lastUnsuccessfulBuild"]["number"]+"<br>"+"Last Unsuccessful Build url:"+obj["lastUnsuccessfulBuild"]["url"].link(obj["lastUnsuccessfulBuild"]["url"]);
+
+      }
+      red = last_failed_build + "<br>" + last_unstable_build +"<br>" + last_unsuccessful_build + "<br><br><br>";
+      green = last_completed_build +"<br>" + last_stable_build + "<br>" + last_successful_build + "<br><br><br>";
+      var display = first_build + "<br>" + last_build + "<br>" + health_report + "<br><br><br>";
+      document.getElementById(i).innerHTML = "JENKINS<br><br>";
+      document.getElementById(id_green).innerHTML = green;
+      document.getElementById(id_red).innerHTML = red;
+      document.getElementById(id).innerHTML = display;
+
+              }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.send();
+}
+
+function show_data(evt, serviceName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tabcontent.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(serviceName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+</body>
+</html>
